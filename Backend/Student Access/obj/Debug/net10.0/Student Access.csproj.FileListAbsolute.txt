@@ -1,0 +1,9 @@
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.csproj.AssemblyReference.cache
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.AssemblyInfoInputs.cache
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.AssemblyInfo.cs
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.csproj.CoreCompileInputs.cache
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\Student Access\obj\Debug\net10.0\Student Access.sourcelink.json
