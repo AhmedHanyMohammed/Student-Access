@@ -9,10 +9,9 @@ using Microsoft.OpenApi;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Database Configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-                    ?? "Data Source=eventpass.db";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseNpgsql(connectionString));
 
 // 2. Application Services DI
 builder.Services.AddScoped<IAuthService, AuthService>();
