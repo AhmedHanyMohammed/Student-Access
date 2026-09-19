@@ -11,4 +11,4 @@ WORKDIR /app
 COPY --from=build /app/publish .
 # Render sets the PORT environment variable automatically
 ENV ASPNETCORE_URLS=http://+:${PORT:-8080}
-ENTRYPOINT ["dotnet", "StudentAccess.dll"]
+ENTRYPOINT ["dotnet", "Student Access.dll"]
