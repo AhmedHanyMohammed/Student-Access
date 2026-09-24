@@ -1,12 +1,14 @@
 using System.Security.Claims;
 using EventPassApi.Dtos.Scans;
 using EventPassApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPassApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = "Admin")]
 public class ScannerController : ControllerBase
 {
     private readonly IScanService _scanService;

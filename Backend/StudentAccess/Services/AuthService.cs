@@ -71,7 +71,8 @@ public class AuthService : IAuthService
                 Id = user.Id,
                 FullName = user.FullName,
                 Email = user.Email,
-                Phone = user.Phone
+                Phone = user.Phone,
+                Role = user.Role
             }
         };
     }
@@ -89,6 +90,7 @@ public class AuthService : IAuthService
             new(JwtRegisteredClaimNames.Email, user.Email),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Name, user.FullName),
+            new(ClaimTypes.Role, user.Role),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

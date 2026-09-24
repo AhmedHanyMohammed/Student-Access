@@ -1418,11 +1418,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\AhmedHanyMohammed\\Student-Access\\Backend\\Student Access\\Student Access.csproj",
-      "projectName": "Student Access",
-      "projectPath": "C:\\Users\\ahmed\\source\\repos\\AhmedHanyMohammed\\Student-Access\\Backend\\Student Access\\Student Access.csproj",
+      "projectUniqueName": "C:\\Users\\ahmed\\source\\repos\\AhmedHanyMohammed\\Student-Access\\Backend\\StudentAccess\\StudentAccess.csproj",
+      "projectName": "StudentAccess",
+      "projectPath": "C:\\Users\\ahmed\\source\\repos\\AhmedHanyMohammed\\Student-Access\\Backend\\StudentAccess\\StudentAccess.csproj",
       "packagesPath": "C:\\Users\\ahmed\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ahmed\\source\\repos\\AhmedHanyMohammed\\Student-Access\\Backend\\Student Access\\obj\\",
+      "outputPath": "C:\\Users\\ahmed\\source\\repos\\AhmedHanyMohammed\\Student-Access\\Backend\\StudentAccess\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

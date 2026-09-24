@@ -7,6 +7,8 @@ public interface IRegistrationService
     Task<RegistrationResponseDto> RegisterForEventAsync(int userId, int eventId);
     Task<RegistrationResponseDto?> GetMyPassAsync(int userId, int? eventId = null);
     Task<List<RegistrationResponseDto>> GetMyRegistrationsAsync(int userId);
+    Task<List<RegistrationResponseDto>> GetEventRegistrationsAsync(int eventId);
+    Task<bool> RemoveRegistrationAsync(int registrationId);
 }
 
 public class RegistrationException : Exception

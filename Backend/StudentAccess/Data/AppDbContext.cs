@@ -26,6 +26,7 @@ public class AppDbContext : DbContext
             entity.Property(u => u.FullName).IsRequired().HasMaxLength(150);
             entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
             entity.Property(u => u.PasswordHash).IsRequired();
+            entity.Property(u => u.Role).IsRequired().HasMaxLength(20).HasDefaultValue("Student");
             entity.Property(u => u.Phone).HasMaxLength(30);
             entity.Property(u => u.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });

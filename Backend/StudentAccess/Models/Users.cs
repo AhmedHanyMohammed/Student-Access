@@ -20,6 +20,9 @@ public class User
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    [Required, MaxLength(20)]
+    public string Role { get; set; } = "Student";
+
     // Navigation
     public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

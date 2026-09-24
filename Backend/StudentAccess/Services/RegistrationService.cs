@@ -29,6 +29,11 @@ public class RegistrationService : IRegistrationService
             throw new RegistrationException("User not found.", StatusCodes.Status404NotFound);
         }
 
+        if (string.Equals(user.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new RegistrationException("Admins cannot register for events as attendees.", StatusCodes.Status403Forbidden);
+        }
+
         var alreadyRegistered = await _db.Registrations
             .AnyAsync(r => r.UserId == userId && r.EventId == eventId);
         if (alreadyRegistered)
@@ -98,6 +103,30 @@ public class RegistrationService : IRegistrationService
             .OrderByDescending(r => r.RegisteredAt)
             .Select(r => MapToDto(r))
             .ToListAsync();
+    }
+
+    public async Task<List<RegistrationResponseDto>> GetEventRegistrationsAsync(int eventId)
+    {
+        return await _db.Registrations
+            .Where(r => r.EventId == eventId)
+            .Include(r => r.Event)
+            .Include(r => r.User)
+            .OrderByDescending(r => r.RegisteredAt)
+            .Select(r => MapToDto(r))
+            .ToListAsync();
+    }
+
+    public async Task<bool> RemoveRegistrationAsync(int registrationId)
+    {
+        var reg = await _db.Registrations.FindAsync(registrationId);
+        if (reg == null)
+        {
+            return false;
+        }
+
+        _db.Registrations.Remove(reg);
+        await _db.SaveChangesAsync();
+        return true;
     }
 
     private static RegistrationResponseDto MapToDto(Registration r) => new()

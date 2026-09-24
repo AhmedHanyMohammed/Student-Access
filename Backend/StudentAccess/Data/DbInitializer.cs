@@ -42,5 +42,20 @@ public static class DbInitializer
 
             await context.SaveChangesAsync();
         }
+
+        // Seed default Admin account if no admin exists
+        if (!await context.Users.AnyAsync(u => u.Role == "Admin"))
+        {
+            context.Users.Add(new User
+            {
+                FullName = "System Administrator",
+                Email = "admin@eventpass.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("AdminPassword123!"),
+                Role = "Admin",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await context.SaveChangesAsync();
+        }
     }
 }

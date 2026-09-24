@@ -46,6 +46,36 @@ public class EventService : IEventService
         return ToDto(ev);
     }
 
+    public async Task<EventDto?> UpdateAsync(int id, CreateEventDto request)
+    {
+        var ev = await _db.Events.FindAsync(id);
+        if (ev == null)
+        {
+            return null;
+        }
+
+        ev.Title = request.Title.Trim();
+        ev.Description = request.Description;
+        ev.EventDate = request.EventDate;
+        ev.Location = request.Location.Trim();
+
+        await _db.SaveChangesAsync();
+        return ToDto(ev);
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var ev = await _db.Events.FindAsync(id);
+        if (ev == null)
+        {
+            return false;
+        }
+
+        _db.Events.Remove(ev);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> SetActiveStatusAsync(int id, bool isActive)
     {
         var ev = await _db.Events.FindAsync(id);

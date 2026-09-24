@@ -19,12 +19,14 @@ public class RegistrationsController : ControllerBase
     }
 
     /// <summary>
-    /// Registers the currently authenticated user for an event and returns their unique QR pass token.
+    /// Registers the currently authenticated student user for an event and returns their unique QR pass token.
     /// </summary>
     [HttpPost]
+    [HttpPost("join")]
     [ProducesResponseType(typeof(RegistrationResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(object), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(object), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] CreateRegistrationDto request)
@@ -79,6 +81,7 @@ public class RegistrationsController : ControllerBase
     /// Gets all registrations for the authenticated user.
     /// </summary>
     [HttpGet("my")]
+    [HttpGet("my-list")]
     [ProducesResponseType(typeof(List<RegistrationResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetMyRegistrations()
@@ -91,6 +94,23 @@ public class RegistrationsController : ControllerBase
 
         var list = await _registrationService.GetMyRegistrationsAsync(userId.Value);
         return Ok(list);
+    }
+
+    /// <summary>
+    /// Removes/cancels a registration (Admin only).
+    /// </summary>
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveRegistration(int id)
+    {
+        var removed = await _registrationService.RemoveRegistrationAsync(id);
+        if (!removed)
+        {
+            return NotFound(new { message = $"Registration with ID {id} not found." });
+        }
+        return Ok(new { message = $"Registration {id} removed successfully." });
     }
 
     private int? GetCurrentUserId()
