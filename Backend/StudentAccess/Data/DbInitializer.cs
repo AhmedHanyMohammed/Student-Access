@@ -10,6 +10,15 @@ public static class DbInitializer
         // Ensure database and tables are created
         await context.Database.EnsureCreatedAsync();
 
+        // Safely add Role column if database table was created previously without it
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(
+                "ALTER TABLE \"Users\" ADD COLUMN IF NOT EXISTS \"Role\" character varying(20) NOT NULL DEFAULT 'Student';"
+            );
+        }
+        catch (Exception) { }
+
         // Seed initial event if none exists
         if (!await context.Events.AnyAsync())
         {

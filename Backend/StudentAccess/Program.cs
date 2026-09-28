@@ -117,12 +117,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Health check endpoint
-app.MapGet("/", () => Results.Ok(new
-{
-    status = "Online",
-    service = "Student Access & EventPass API",
-    swagger = "/swagger"
-}));
+// Redirect root endpoint to Swagger UI
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();
