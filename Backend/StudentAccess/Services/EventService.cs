@@ -35,7 +35,7 @@ public class EventService : IEventService
         {
             Title = request.Title.Trim(),
             Description = request.Description,
-            EventDate = request.EventDate,
+            EventDate = DateTime.SpecifyKind(request.EventDate, DateTimeKind.Utc),
             Location = request.Location.Trim(),
             IsActive = true
         };
@@ -56,7 +56,7 @@ public class EventService : IEventService
 
         ev.Title = request.Title.Trim();
         ev.Description = request.Description;
-        ev.EventDate = request.EventDate;
+        ev.EventDate = DateTime.SpecifyKind(request.EventDate, DateTimeKind.Utc);
         ev.Location = request.Location.Trim();
 
         await _db.SaveChangesAsync();
