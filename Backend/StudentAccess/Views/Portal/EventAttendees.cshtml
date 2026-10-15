@@ -1,0 +1,92 @@
+@model EventPassApi.Models.Event
+@{
+    Layout = "_PortalLayout";
+    ViewData["Title"] = "Event Attendees - " + Model.Title;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="/Portal/Events" class="text-decoration-none small text-muted"><i class="bi bi-arrow-left"></i> Back to Events</a>
+        <h3 class="fw-bold m-0 mt-1">@Model.Title</h3>
+        <p class="text-muted small m-0">
+            <span class="badge badge-cat me-2" style="background-color: @(Model.Category?.ColorHex ?? "#6C63FF")15; color: @(Model.Category?.ColorHex ?? "#6C63FF"); border: 1px solid @(Model.Category?.ColorHex ?? "#6C63FF")40;">
+                @(Model.Category?.Name ?? "General")
+            </span>
+            <i class="bi bi-calendar-event me-1"></i>@Model.EventDate.ToLocalTime().ToString("MMM dd, yyyy · hh:mm tt") •
+            <i class="bi bi-geo-alt me-1"></i>@Model.Location
+        </p>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+            <i class="bi bi-ticket-perforated-fill me-1"></i> @Model.Registrations.Count Passes Issued
+        </span>
+    </div>
+</div>
+
+<div class="card card-custom p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold m-0">Registered Students List</h5>
+    </div>
+
+    @if (Model.Registrations.Count == 0)
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-person-x fs-1 d-block mb-2 text-secondary"></i>
+            No students registered for this event yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light small">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Registration Date</th>
+                        <th>Check-in Status</th>
+                        <th>QR Token</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reg in Model.Registrations.OrderByDescending(r => r.RegisteredAt))
+                    {
+                        <tr>
+                            <td class="fw-bold">@reg.User.FullName</td>
+                            <td>@reg.User.Email</td>
+                            <td class="small text-muted">@reg.RegisteredAt.ToLocalTime().ToString("MMM dd, yyyy hh:mm tt")</td>
+                            <td>
+                                @if (reg.Status == EventPassApi.Models.RegistrationStatus.CheckedIn || reg.CheckedInAt != null)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Checked In
+                                    </span>
+                                    <div class="small text-muted" style="font-size: 0.72rem;">@reg.CheckedInAt?.ToLocalTime().ToString("hh:mm tt")</div>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning bg-opacity-10 text-warning">
+                                        <i class="bi bi-clock-history me-1"></i> Registered
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <code class="small text-muted">@reg.QrToken</code>
+                            </td>
+                            <td class="text-end">
+                                <form method="post" action="/Portal/RemoveAttendee" class="d-inline" onsubmit="return confirm('Cancel registration for @reg.User.FullName?');">
+                                    <input type="hidden" name="registrationId" value="@reg.Id" />
+                                    <input type="hidden" name="eventId" value="@Model.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-3" title="Cancel Student Registration">
+                                        <i class="bi bi-person-x"></i> Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

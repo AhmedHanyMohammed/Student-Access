@@ -140,3 +140,5 @@ C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\StudentAcce
 C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\StudentAccess\obj\Debug\net10.0\StudentAccess.pdb
 C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\StudentAccess\obj\Debug\net10.0\StudentAccess.genruntimeconfig.cache
 C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\StudentAccess\obj\Debug\net10.0\ref\StudentAccess.dll
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\StudentAccess\obj\Debug\net10.0\StudentAccess.RazorAssemblyInfo.cache
+C:\Users\ahmed\source\repos\AhmedHanyMohammed\Student-Access\Backend\StudentAccess\obj\Debug\net10.0\StudentAccess.RazorAssemblyInfo.cs

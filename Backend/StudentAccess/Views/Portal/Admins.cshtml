@@ -1,0 +1,133 @@
+@model List<EventPassApi.Models.User>
+@{
+    Layout = "_PortalLayout";
+    ViewData["Title"] = "Admin Management";
+    var categories = ViewBag.Categories as List<EventPassApi.Models.Category> ?? new();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold m-0">Admin Management</h3>
+        <p class="text-muted small m-0">System Administrator access: configure department and category admins</p>
+    </div>
+    <button class="btn btn-brand" data-bs-toggle="modal" data-bs-target="#createAdminModal">
+        <i class="bi bi-person-plus-fill me-1"></i> Add Category Admin
+    </button>
+</div>
+
+<div class="card card-custom p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light small">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Assigned Category Scope</th>
+                    <th>Created</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var admin in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">
+                            <i class="bi bi-person-badge me-2 text-primary"></i>@admin.FullName
+                        </td>
+                        <td>@admin.Email</td>
+                        <td>
+                            @if (admin.Role == "SuperAdmin")
+                            {
+                                <span class="badge bg-warning text-dark"><i class="bi bi-stars me-1"></i>SuperAdmin</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary">Category Admin</span>
+                            }
+                        </td>
+                        <td>
+                            @if (admin.Role == "SuperAdmin")
+                            {
+                                <span class="badge bg-light text-dark border">All Categories (Unrestricted)</span>
+                            }
+                            else if (admin.AssignedCategory != null)
+                            {
+                                <span class="badge badge-cat" style="background-color: @(admin.AssignedCategory.ColorHex)15; color: @(admin.AssignedCategory.ColorHex); border: 1px solid @(admin.AssignedCategory.ColorHex)40;">
+                                    @admin.AssignedCategory.Name
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary bg-opacity-25 text-dark">Unassigned</span>
+                            }
+                        </td>
+                        <td class="small text-muted">@admin.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td class="text-end">
+                            @if (admin.Role != "SuperAdmin")
+                            {
+                                <form method="post" action="/Portal/DeleteAdmin" class="d-inline" onsubmit="return confirm('Are you sure you want to revoke this admin account?');">
+                                    <input type="hidden" name="id" value="@admin.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-3" title="Delete Admin">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Protected</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Create New Category Admin -->
+<div class="modal fade" id="createAdminModal" tabindex="-1" aria-labelledby="createAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="createAdminModalLabel">Create Department / Category Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="/Portal/CreateAdmin">
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">This admin will only have permission to manage events and check-ins within their selected category.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Full Name</label>
+                        <input type="text" name="fullName" class="form-control rounded-3" placeholder="e.g. John Doe" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Email Address</label>
+                        <input type="email" name="email" class="form-control rounded-3" placeholder="music.admin@eventpass.com" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Temporary Password</label>
+                        <input type="password" name="password" class="form-control rounded-3" placeholder="••••••••••••" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Assigned Category Scope</label>
+                        <select name="categoryId" class="form-select rounded-3" required>
+                            <option value="">-- Choose Category --</option>
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.Id">@cat.Name (@cat.Slug)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-brand">Create Admin Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

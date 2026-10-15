@@ -36,6 +36,7 @@ public class AuthService : IAuthService
             Phone = request.Phone,
             Email = normalizedEmail,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = "Student",
             CreatedAt = DateTime.UtcNow
         };
 
@@ -49,11 +50,12 @@ public class AuthService : IAuthService
     {
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
 
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+        var user = await _db.Users
+            .Include(u => u.AssignedCategory)
+            .FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            // Same message for "no such user" and "wrong password" —
-            // never reveal which one it was.
             throw new AuthException("Invalid email or password.", StatusCodes.Status401Unauthorized);
         }
 
@@ -72,7 +74,9 @@ public class AuthService : IAuthService
                 FullName = user.FullName,
                 Email = user.Email,
                 Phone = user.Phone,
-                Role = user.Role
+                Role = user.Role,
+                AssignedCategoryId = user.AssignedCategoryId,
+                AssignedCategoryName = user.AssignedCategory?.Name
             }
         };
     }
@@ -93,6 +97,16 @@ public class AuthService : IAuthService
             new(ClaimTypes.Role, user.Role),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        // If the user has a specific category assigned, embed it into the claims
+        if (user.AssignedCategoryId.HasValue)
+        {
+            claims.Add(new Claim("CategoryId", user.AssignedCategoryId.Value.ToString()));
+            if (!string.IsNullOrEmpty(user.AssignedCategory?.Name))
+            {
+                claims.Add(new Claim("CategoryName", user.AssignedCategory.Name));
+            }
+        }
 
         var expiryMinutes = double.Parse(jwtSettings["ExpiryMinutes"] ?? "1440");
 

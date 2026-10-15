@@ -1,0 +1,85 @@
+@model List<EventPassApi.Models.Category>
+@{
+    Layout = "_PortalLayout";
+    ViewData["Title"] = "Categories Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold m-0">Event Categories</h3>
+        <p class="text-muted small m-0">SuperAdmin settings: configure department activity boundaries and categories</p>
+    </div>
+    <button class="btn btn-brand" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+        <i class="bi bi-tag-fill me-1"></i> New Category
+    </button>
+</div>
+
+<div class="row g-4">
+    @foreach (var cat in Model)
+    {
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card card-custom p-4 h-100 position-relative">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="p-3 rounded-4" style="background-color: @(cat.ColorHex)15; color: @cat.ColorHex; font-size: 1.5rem;">
+                        <i class="bi bi-tag"></i>
+                    </div>
+                    <span class="badge @(cat.IsActive ? "bg-success bg-opacity-10 text-success" : "bg-secondary")">
+                        @(cat.IsActive ? "Active" : "Archived")
+                    </span>
+                </div>
+
+                <h5 class="fw-bold mb-1">@cat.Name</h5>
+                <code class="text-muted small mb-2 d-block">Slug: @cat.Slug</code>
+                <p class="text-muted small flex-grow-1">@(cat.Description ?? "No description provided.")</p>
+
+                <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">
+                        <i class="bi bi-calendar-event me-1"></i> @cat.Events.Count Events
+                    </span>
+                    <span class="small text-muted">
+                        <i class="bi bi-shield-person me-1"></i> @cat.AssignedAdmins.Count Admins
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal: Create Category -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="createCategoryModalLabel">Create Event Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="/Portal/CreateCategory">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Category Name</label>
+                        <input type="text" name="name" class="form-control rounded-3" placeholder="e.g. Esports & Gaming" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Slug (Optional, URL-friendly)</label>
+                        <input type="text" name="slug" class="form-control rounded-3" placeholder="esports-gaming" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Description</label>
+                        <textarea name="description" class="form-control rounded-3" rows="2" placeholder="Brief scope of this category..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Brand Color (Hex)</label>
+                        <input type="color" name="colorHex" class="form-control form-control-color rounded-3 w-100" value="#6C63FF" title="Choose color" />
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-brand">Create Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

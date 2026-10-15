@@ -8,4 +8,6 @@ public class EventDto
     public DateTime EventDate { get; set; }
     public string Location { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    public int CategoryId { get; set; }
+    public string? CategoryName { get; set; }
 }

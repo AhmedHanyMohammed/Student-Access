@@ -1,0 +1,166 @@
+@{
+    Layout = "_PortalLayout";
+    ViewData["Title"] = "Admin Dashboard";
+    var events = ViewBag.RecentEvents as List<EventPassApi.Models.Event> ?? new();
+    var stats = ViewBag.Stats;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold m-0">Dashboard Overview</h3>
+        <p class="text-muted small m-0">
+            @if (User.IsInRole("SuperAdmin"))
+            {
+                <span class="badge bg-warning text-dark"><i class="bi bi-shield-check"></i> System Administrator (All Categories)</span>
+            }
+            else
+            {
+                <span class="badge bg-primary"><i class="bi bi-tag-fill"></i> Scoped Category: @User.FindFirst("CategoryName")?.Value</span>
+            }
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/Portal/Events" class="btn btn-brand">
+            <i class="bi bi-plus-circle me-1"></i> New Event
+        </a>
+    </div>
+</div>
+
+<!-- Key Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card card-custom p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold">Active Events</div>
+                    <h3 class="fw-bold my-1">@stats.ActiveEvents</h3>
+                    <small class="text-muted">Total: @stats.TotalEvents</small>
+                </div>
+                <div class="p-3 rounded-4 bg-primary bg-opacity-10 text-primary fs-3">
+                    🎪
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card card-custom p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold">Total Registrations</div>
+                    <h3 class="fw-bold my-1 text-success">@stats.TotalRegistrations</h3>
+                    <small class="text-muted">Student passes issued</small>
+                </div>
+                <div class="p-3 rounded-4 bg-success bg-opacity-10 text-success fs-3">
+                    🎟️
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card card-custom p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold">Checked-In Students</div>
+                    <h3 class="fw-bold my-1 text-info">@stats.CheckedInCount</h3>
+                    <small class="text-muted">Gate attendance verified</small>
+                </div>
+                <div class="p-3 rounded-4 bg-info bg-opacity-10 text-info fs-3">
+                    ✅
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card card-custom p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small fw-semibold">Categories</div>
+                    <h3 class="fw-bold my-1 text-warning">@stats.TotalCategories</h3>
+                    <small class="text-muted">Active domains</small>
+                </div>
+                <div class="p-3 rounded-4 bg-warning bg-opacity-10 text-warning fs-3">
+                    🏷️
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Events Table -->
+<div class="card card-custom p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold m-0">Recent Scheduled Events</h5>
+        <a href="/Portal/Events" class="text-decoration-none small fw-semibold">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    @if (events.Count == 0)
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-calendar-x fs-1 d-block mb-2 text-secondary"></i>
+            No events found in this scope.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light small">
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Event Date</th>
+                        <th>Location</th>
+                        <th>Registrations</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ev in events)
+                    {
+                        <tr>
+                            <td class="fw-bold">@ev.Title</td>
+                            <td>
+                                <span class="badge badge-cat" style="background-color: @(ev.Category?.ColorHex ?? "#6C63FF")15; color: @(ev.Category?.ColorHex ?? "#6C63FF"); border: 1px solid @(ev.Category?.ColorHex ?? "#6C63FF")40;">
+                                    @(ev.Category?.Name ?? "General")
+                                </span>
+                            </td>
+                            <td>
+                                <div><i class="bi bi-calendar3 me-1 text-muted"></i>@ev.EventDate.ToLocalTime().ToString("MMM dd, yyyy")</div>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>@ev.EventDate.ToLocalTime().ToString("hh:mm tt")</small>
+                            </td>
+                            <td class="small text-muted">@ev.Location</td>
+                            <td>
+                                <span class="badge bg-secondary rounded-pill">
+                                    <i class="bi bi-people-fill me-1"></i> @ev.Registrations.Count
+                                </span>
+                            </td>
+                            <td>
+                                @if (ev.EventDate < DateTime.UtcNow)
+                                {
+                                    <span class="badge bg-light text-muted border">Past</span>
+                                }
+                                else if (ev.IsActive)
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a href="/Portal/EventAttendees/@ev.Id" class="btn btn-sm btn-outline-primary rounded-3 me-1" title="View Registered Attendees">
+                                    <i class="bi bi-people"></i> Attendees
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

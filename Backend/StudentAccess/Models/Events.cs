@@ -19,6 +19,10 @@ public class Event
 
     public bool IsActive { get; set; } = true;
 
+    // Category association (defaults to 1 = General)
+    public int CategoryId { get; set; } = 1;
+    public Category? Category { get; set; }
+
     // Navigation
     public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 }

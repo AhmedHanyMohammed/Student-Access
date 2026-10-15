@@ -4,7 +4,7 @@ namespace EventPassApi.Services;
 
 public interface IEventService
 {
-    Task<List<EventDto>> GetActiveEventsAsync();
+    Task<List<EventDto>> GetActiveEventsAsync(int? categoryId = null);
     Task<EventDto?> GetByIdAsync(int id);
     Task<EventDto> CreateAsync(CreateEventDto request);
     Task<EventDto?> UpdateAsync(int id, CreateEventDto request);

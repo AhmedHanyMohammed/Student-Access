@@ -21,7 +21,11 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required, MaxLength(20)]
-    public string Role { get; set; } = "Student";
+    public string Role { get; set; } = "Student"; // "SuperAdmin", "Admin", "Student"
+
+    // Optional category assignment for Category Admins
+    public int? AssignedCategoryId { get; set; }
+    public Category? AssignedCategory { get; set; }
 
     // Navigation
     public ICollection<Registration> Registrations { get; set; } = new List<Registration>();

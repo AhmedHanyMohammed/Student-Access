@@ -1,6 +1,7 @@
 using System.Text;
 using EventPassApi.Data;
 using EventPassApi.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,17 +20,18 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IScanService, ScanService>();
 
-// 3. JWT Authentication Configuration
+// 3. Dual Authentication Configuration (JWT Bearer for Mobile App + Cookie Auth for Web Portal)
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuperSecretKeyForEventPassAppMustBeLongEnough123456!";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "EventPassApi";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "EventPassMobileApp";
 
 builder.Services.AddAuthentication(options =>
 {
+    // Default scheme for API endpoints is JWT
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options =>
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
@@ -44,6 +46,15 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.LoginPath = "/Portal/Login";
+    options.LogoutPath = "/Portal/Logout";
+    options.AccessDeniedPath = "/Portal/Login";
+    options.Cookie.Name = "EventPass_Portal_Session";
+    options.ExpireTimeSpan = TimeSpan.FromHours(12);
+    options.SlidingExpiration = true;
 });
 
 builder.Services.AddAuthorization();
@@ -59,8 +70,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 5. Controllers & Swagger
-builder.Services.AddControllers();
+// 5. MVC Controllers & Razor Views Support for Portal
+builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -68,7 +79,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Student Access & EventPass API",
         Version = "v1",
-        Description = "Production-style backend API for User Authentication, Event Registration, QR Pass generation, and Scanner Check-in."
+        Description = "Production-style backend API for User Authentication, Category-Based Event Management, QR Pass generation, and Scanner Check-in."
     });
 
     var securityScheme = new OpenApiSecurityScheme
@@ -111,13 +122,18 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Portal}/{action=Index}/{id?}");
 
-// Redirect root endpoint to Swagger UI
-app.MapGet("/", () => Results.Redirect("/swagger"));
+// Redirect root endpoint to the Admin Portal
+app.MapGet("/", () => Results.Redirect("/Portal"));
 
 app.Run();

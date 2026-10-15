@@ -22,3 +22,31 @@ build_property.MSBuildProjectDirectory = C:\Users\ahmed\source\repos\AhmedHanyMo
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Portal/Admins.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9ydGFsXEFkbWlucy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Portal/Categories.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9ydGFsXENhdGVnb3JpZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Portal/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9ydGFsXERhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Portal/EventAttendees.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9ydGFsXEV2ZW50QXR0ZW5kZWVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Portal/Events.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9ydGFsXEV2ZW50cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Portal/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG9ydGFsXExvZ2luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/ahmed/source/repos/AhmedHanyMohammed/Student-Access/Backend/StudentAccess/Views/Shared/_PortalLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Qb3J0YWxMYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

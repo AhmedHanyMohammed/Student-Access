@@ -13,4 +13,6 @@ public class UserDto
     public string Email { get; set; } = string.Empty;
     public string? Phone { get; set; }
     public string Role { get; set; } = "Student";
+    public int? AssignedCategoryId { get; set; }
+    public string? AssignedCategoryName { get; set; }
 }

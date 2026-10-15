@@ -14,4 +14,6 @@ public class CreateEventDto
 
     [Required, MaxLength(250)]
     public string Location { get; set; } = string.Empty;
+
+    public int? CategoryId { get; set; }
 }

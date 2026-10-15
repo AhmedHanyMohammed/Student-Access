@@ -10,7 +10,7 @@ public static class DbInitializer
         // Ensure database and tables are created
         await context.Database.EnsureCreatedAsync();
 
-        // Safely add Role column if database table was created previously without it
+        // 1. Safe incremental schema migrations for PostgreSQL
         try
         {
             await context.Database.ExecuteSqlRawAsync(
@@ -19,7 +19,81 @@ public static class DbInitializer
         }
         catch (Exception) { }
 
-        // Seed initial event if none exists
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(
+                "ALTER TABLE \"Users\" ADD COLUMN IF NOT EXISTS \"AssignedCategoryId\" integer NULL;"
+            );
+        }
+        catch (Exception) { }
+
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(
+                "ALTER TABLE \"Events\" ADD COLUMN IF NOT EXISTS \"CategoryId\" integer NOT NULL DEFAULT 1;"
+            );
+        }
+        catch (Exception) { }
+
+        // 2. Seed Default Categories
+        if (!await context.Categories.AnyAsync())
+        {
+            context.Categories.AddRange(
+                new Category
+                {
+                    Name = "General",
+                    Slug = "general",
+                    Description = "General campus activities, orientations, and celebrations",
+                    ColorHex = "#6C63FF",
+                    IconName = "event",
+                    IsActive = true
+                },
+                new Category
+                {
+                    Name = "Hackathons & Coding",
+                    Slug = "hackathons",
+                    Description = "Hackathons, competitive programming, and developer bootcamps",
+                    ColorHex = "#00C2A8",
+                    IconName = "terminal",
+                    IsActive = true
+                },
+                new Category
+                {
+                    Name = "Music & Arts",
+                    Slug = "music-arts",
+                    Description = "Concerts, cultural shows, live music, and theatrical performances",
+                    ColorHex = "#FF6B8A",
+                    IconName = "music_note",
+                    IsActive = true
+                },
+                new Category
+                {
+                    Name = "Workshops & Tech",
+                    Slug = "workshops",
+                    Description = "Hands-on technical workshops, AI talks, and skill accelerators",
+                    ColorHex = "#3B82F6",
+                    IconName = "psychology",
+                    IsActive = true
+                },
+                new Category
+                {
+                    Name = "Sports & Fitness",
+                    Slug = "sports",
+                    Description = "Tournaments, athletic leagues, and campus marathons",
+                    ColorHex = "#FFA84C",
+                    IconName = "fitness_center",
+                    IsActive = true
+                }
+            );
+
+            await context.SaveChangesAsync();
+        }
+
+        var generalCat = await context.Categories.FirstOrDefaultAsync(c => c.Slug == "general");
+        var hackathonCat = await context.Categories.FirstOrDefaultAsync(c => c.Slug == "hackathons");
+        var workshopCat = await context.Categories.FirstOrDefaultAsync(c => c.Slug == "workshops");
+
+        // 3. Seed initial events if none exist
         if (!await context.Events.AnyAsync())
         {
             context.Events.AddRange(
@@ -28,42 +102,80 @@ public static class DbInitializer
                     Title = "Student Tech Fest 2026",
                     Description = "Annual flagship conference celebrating student innovation, coding projects, and keynote speakers from top tech companies.",
                     Location = "Main Campus Hall & Innovation Center, Auditorium A",
-                    EventDate = DateTime.UtcNow.AddDays(7),
-                    IsActive = true
+                    EventDate = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(7), DateTimeKind.Utc),
+                    IsActive = true,
+                    CategoryId = generalCat?.Id ?? 1
                 },
                 new Event
                 {
                     Title = "AI & Mobile Development Workshop",
                     Description = "Hands-on workshop building cross-platform Flutter apps powered by modern cloud APIs and AI agents.",
                     Location = "Computer Science Building, Lab 302",
-                    EventDate = DateTime.UtcNow.AddDays(14),
-                    IsActive = true
+                    EventDate = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(14), DateTimeKind.Utc),
+                    IsActive = true,
+                    CategoryId = workshopCat?.Id ?? 1
                 },
                 new Event
                 {
                     Title = "Spring Hackathon 2026",
                     Description = "48-hour continuous student hackathon with mentorship, food, prizes, and demo day.",
                     Location = "Student Activity Center - Arena",
-                    EventDate = DateTime.UtcNow.AddDays(30),
-                    IsActive = true
+                    EventDate = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(30), DateTimeKind.Utc),
+                    IsActive = true,
+                    CategoryId = hackathonCat?.Id ?? 1
                 }
             );
 
             await context.SaveChangesAsync();
         }
 
-        // Seed default Admin account if no admin exists
-        if (!await context.Users.AnyAsync(u => u.Role == "Admin"))
+        // 4. Seed default SuperAdmin account
+        var superAdmin = await context.Users.FirstOrDefaultAsync(u => u.Email == "admin@eventpass.com");
+        if (superAdmin == null)
         {
             context.Users.Add(new User
             {
                 FullName = "System Administrator",
                 Email = "admin@eventpass.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("AdminPassword123!"),
-                Role = "Admin",
+                Role = "SuperAdmin",
                 CreatedAt = DateTime.UtcNow
             });
+            await context.SaveChangesAsync();
+        }
+        else if (superAdmin.Role != "SuperAdmin")
+        {
+            superAdmin.Role = "SuperAdmin";
+            await context.SaveChangesAsync();
+        }
 
+        // 5. Seed sample Category Admin (e.g. Music & Hackathon Admins) for testing
+        if (!await context.Users.AnyAsync(u => u.Email == "music.admin@eventpass.com"))
+        {
+            var musicCat = await context.Categories.FirstOrDefaultAsync(c => c.Slug == "music-arts");
+            context.Users.Add(new User
+            {
+                FullName = "Music Department Admin",
+                Email = "music.admin@eventpass.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("MusicAdmin123!"),
+                Role = "Admin",
+                AssignedCategoryId = musicCat?.Id,
+                CreatedAt = DateTime.UtcNow
+            });
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.Users.AnyAsync(u => u.Email == "hackathon.admin@eventpass.com"))
+        {
+            context.Users.Add(new User
+            {
+                FullName = "Hackathon Lead Admin",
+                Email = "hackathon.admin@eventpass.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("HackathonAdmin123!"),
+                Role = "Admin",
+                AssignedCategoryId = hackathonCat?.Id,
+                CreatedAt = DateTime.UtcNow
+            });
             await context.SaveChangesAsync();
         }
     }

@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     {
     }
 
+    public DbSet<Category> Categories => Set<Category>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Event> Events => Set<Event>();
     public DbSet<Registration> Registrations => Set<Registration>();
@@ -17,6 +18,20 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Categories
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.HasIndex(c => c.Name).IsUnique();
+            entity.HasIndex(c => c.Slug).IsUnique();
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(50);
+            entity.Property(c => c.Slug).IsRequired().HasMaxLength(50);
+            entity.Property(c => c.ColorHex).HasMaxLength(10).HasDefaultValue("#6C63FF");
+            entity.Property(c => c.IconName).HasMaxLength(30).HasDefaultValue("event");
+            entity.Property(c => c.IsActive).HasDefaultValue(true);
+            entity.Property(c => c.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
 
         // Users
         modelBuilder.Entity<User>(entity =>
@@ -29,6 +44,12 @@ public class AppDbContext : DbContext
             entity.Property(u => u.Role).IsRequired().HasMaxLength(20).HasDefaultValue("Student");
             entity.Property(u => u.Phone).HasMaxLength(30);
             entity.Property(u => u.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(u => u.AssignedCategory)
+                  .WithMany(c => c.AssignedAdmins)
+                  .HasForeignKey(u => u.AssignedCategoryId)
+                  .IsRequired(false)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         // Events
@@ -38,6 +59,12 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Location).IsRequired().HasMaxLength(250);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.CategoryId).HasDefaultValue(1);
+
+            entity.HasOne(e => e.Category)
+                  .WithMany(c => c.Events)
+                  .HasForeignKey(e => e.CategoryId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Registrations
