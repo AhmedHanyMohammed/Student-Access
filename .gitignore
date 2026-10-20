@@ -13,19 +13,19 @@ Backend/**/eventpass.db-shm
 Backend/**/eventpass.db-wal
 
 ## Flutter and Dart
-Frontend/**/.dart_tool/
-Frontend/**/.flutter-plugins
-Frontend/**/.flutter-plugins-dependencies
-Frontend/**/build/
-Frontend/**/.idea/
-Frontend/**/.vscode/
-Frontend/**/android/.gradle/
-Frontend/**/android/local.properties
-Frontend/**/ios/.symlinks/
-Frontend/**/ios/Pods/
-Frontend/**/ios/Flutter/Generated.xcconfig
-Frontend/**/ios/Flutter/flutter_export_environment.sh
-Frontend/**/macos/Flutter/ephemeral/
-Frontend/**/windows/flutter/ephemeral/
-Frontend/**/linux/flutter/ephemeral/
+Frontend/.dart_tool/
+Frontend/.flutter-plugins
+Frontend/.flutter-plugins-dependencies
+Frontend/build/
+Frontend/.idea/
+Frontend/.vscode/
+Frontend/android/.gradle/
+Frontend/android/local.properties
+Frontend/ios/.symlinks/
+Frontend/ios/Pods/
+Frontend/ios/Flutter/Generated.xcconfig
+Frontend/ios/Flutter/flutter_export_environment.sh
+Frontend/macos/Flutter/ephemeral/
+Frontend/windows/flutter/ephemeral/
+Frontend/linux/flutter/ephemeral/
 Frontend/**/*.iml
